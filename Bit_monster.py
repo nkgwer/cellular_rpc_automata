@@ -35,6 +35,7 @@ class Bitmonster:
         self.color_dict = {'red': 'green', 'green': 'yellow', 'yellow': 'red'}
         self.name = name
         self.field = field
+        self.direction_dic = {'up': (0, 1), 'right': (1, 0), 'down': (0, -1),'left': (-1, 0)}
         self.direction = random.choice(['up', 'right', 'down', 'left'])
         self.move_dic = random.choice([{'up':'right', 'right': 'down', 'down': 'left', 'left': 'up'},
                                        {'up':'left', 'left': 'down', 'down': 'right', 'right': 'up'}])
@@ -63,26 +64,13 @@ class Bitmonster:
             self.joined = True
             return
 
-        if self.direction == 'up':
-            if self.field.get_grid_state(self.x, self.y + 1) == 0:
-                self.y += 1
-            else:
-                self.direction = self.move_dic[self.direction]
-        elif self.direction == 'right':
-            if self.field.get_grid_state(self.x+1, self.y) == 0:
-                self.x += 1
-            else:
-                self.direction = self.move_dic[self.direction]
-        elif self.direction == 'down':
-            if self.field.get_grid_state(self.x, self.y - 1) == 0:
-                self.y -= 1
-            else:
-                self.direction = self.move_dic[self.direction]
-        elif self.direction == 'left':
-            if self.field.get_grid_state(self.x-1, self.y) == 0:
-                self.x -= 1
-            else:
-                self.direction = self.move_dic[self.direction]
+        if self.field.get_grid_state(self.x + self.direction_dic[self.direction][0],
+                                     self.y + self.direction_dic[self.direction][1]) == 0:
+            self.x += self.direction_dic[self.direction][0]
+            self.y += self.direction_dic[self.direction][1]
+        else:
+            self.direction = self.move_dic[self.direction]
+
 
 
 
