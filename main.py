@@ -1,5 +1,6 @@
 import tkinter
 from Bit_monster import *
+import functools
 
 root = tkinter.Tk()
 root.title('bit_monsters')
@@ -7,7 +8,7 @@ root.geometry("640x640")
 canvas = tkinter.Canvas(root, width=640, height=640)
 canvas.pack()
 f = Field(n=64)
-monsters = [Bitmonster(random.randint(3,60), random.randint(3,60),random.choice(['red', 'yellow', 'green']), f) for i in range(200)]
+monsters = [Bitmonster(random.randint(3, 60), random.randint(3, 60), random.choice(['red', 'yellow', 'green', 'blue']), f) for i in range(100)]
 rectangles = [canvas.create_rectangle(10*monster.x, 10*monster.y, 10*monster.x + 10, 10*monster.y + 10,
                                       fill=monster.color, tag="monster") for monster in monsters]
 f.monsters = monsters

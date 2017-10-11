@@ -32,19 +32,21 @@ class Bitmonster:
         self.x = x
         self.y = y
         self.color = color
-        self.color_dict = {'red': 'green', 'green': 'yellow', 'yellow': 'red'}
+        self.color_dict = {'red': 'green', 'green': 'yellow', 'yellow': 'blue', 'blue': 'red'}
         self.name = name
         self.field = field
         self.direction_dic = {'up': (0, 1), 'right': (1, 0), 'down': (0, -1),'left': (-1, 0)}
         self.direction = random.choice(['up', 'right', 'down', 'left'])
-        self.move_dic = random.choice([{'up':'right', 'right': 'down', 'down': 'left', 'left': 'up'},
-                                       {'up':'left', 'left': 'down', 'down': 'right', 'right': 'up'}])
+        self.move_dic = {'up': ['right', 'left'], 'right': ['down', 'up'],
+                         'down': ['left', 'right'], 'left': ['up', 'down']}
+
         self.joined = False
+        self.length = 0
 
     def move(self):
         if self.joined:
             return
-        patterns = [(0, 1)]
+        patterns = [(0, 1), (1, 0),(-1,0),(0,-1)]
         adj = 0
         for dx, dy in patterns:
             grid = self.field.get_grid_state(self.x+dx, self.y+dy)
@@ -69,7 +71,7 @@ class Bitmonster:
             self.x += self.direction_dic[self.direction][0]
             self.y += self.direction_dic[self.direction][1]
         else:
-            self.direction = self.move_dic[self.direction]
+            self.direction = random.choice(self.move_dic[self.direction])
 
 
 
