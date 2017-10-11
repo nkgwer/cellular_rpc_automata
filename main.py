@@ -1,7 +1,5 @@
 import tkinter
 from Bit_monster import *
-from time import sleep
-
 
 root = tkinter.Tk()
 root.title('bit_monsters')
@@ -13,15 +11,6 @@ monsters = [Bitmonster(random.randint(3,60), random.randint(3,60),random.choice(
 rectangles = [canvas.create_rectangle(10*monster.x, 10*monster.y, 10*monster.x + 10, 10*monster.y + 10,
                                       fill=monster.color, tag="monster") for monster in monsters]
 f.monsters = monsters
-
-while False:
-    for monster in monsters:
-        monster.move()
-
-    sleep(1)
-    canvas.delete("monster")
-    canvas.pack()
-    root.update()
 
 
 def move_rectangles(rectangles, monsters, canvas, f):
