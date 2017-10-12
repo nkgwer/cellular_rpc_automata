@@ -49,7 +49,7 @@ class Bitmonster:
                          'down': ['left', 'right'], 'left': ['up', 'down']}
 
         self.neighbors = set()
-        self.longest_ever_seen = random.choice([0, 0, 0, 0, 0, 5])
+        self.longest_ever_seen = 0
         self.block = None
 
 
@@ -67,6 +67,7 @@ class Bitmonster:
             return
 
         else:
+            print(self.longest_ever_seen)
             for neighbor in self.neighbors:
                 if neighbor.color != self.color:
                     if neighbor.block:
