@@ -1,4 +1,5 @@
 import random
+import copy
 class Field:
     def __init__(self, n = 64):
         self.n = n
@@ -41,38 +42,63 @@ class Bitmonster:
                          'down': ['left', 'right'], 'left': ['up', 'down']}
 
         self.joined = False
-        self.length = 0
+        self.neighbors = set()
+        self.joined_neighbors = set()
+        self.longest_ever_seen = 0
 
     def move(self):
-        if self.joined:
-            return
-        patterns = [(0, 1), (1, 0),(-1,0),(0,-1)]
-        adj = 0
+        patterns = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        self.neighbors.clear()
         for dx, dy in patterns:
             grid = self.field.get_grid_state(self.x+dx, self.y+dy)
             if type(grid) == Bitmonster:
-                if grid.color == self.color_dict[self.color]:
-                    adj += 1
-                else:
-                    adj = 0
-                    break
-            if adj > 1:
-                break
-        if adj == 1:
-            for dx, dy in patterns:
-                grid = self.field.get_grid_state(self.x + dx, self.y + dy)
-                if type(grid) == Bitmonster:
-                    grid.joined = True
-            self.joined = True
+                self.neighbors.add(grid)
+
+        if self.joined:
+            print(len(self.joined_neighbors))
+            for neighbor in self.neighbors:
+                if neighbor.joined:
+                    self.joined_neighbors.add(neighbor)
+                self.joined_neighbors = self.joined_neighbors.union(neighbor.joined_neighbors)
             return
 
-        if self.field.get_grid_state(self.x + self.direction_dic[self.direction][0],
-                                     self.y + self.direction_dic[self.direction][1]) == 0:
+        else:
+            self.joined_neighbors.clear()
+            for neighbor in self.neighbors:
+                if neighbor.color != self.color and len(neighbor.joined_neighbors) >= self.longest_ever_seen:
+                    self.joined = True
+                    neighbor.joined = True
+
+
+        front = self.field.get_grid_state(self.x + self.direction_dic[self.direction][0],
+                                     self.y + self.direction_dic[self.direction][1])
+
+        if front == 0:
             self.x += self.direction_dic[self.direction][0]
             self.y += self.direction_dic[self.direction][1]
-        else:
+            return
+
+        elif type(front) == Bitmonster:
+            if self.longest_ever_seen <= len(front.joined_neighbors):
+                self.longest_ever_seen = len(front.joined_neighbors)
+            else:
+                front.joined = False
+                neighbor_of_front = copy.copy(front.joined_neighbors)
+                for front_neighbor in neighbor_of_front:
+                    front_neighbor.joined = False
+                    front_neighbor.longest_ever_seen = self.longest_ever_seen
+                    front_neighbor.joined_neighbors.clear()
+                print("kaisan")
+
+
+            #print(self.longest_ever_seen)
             self.direction = random.choice(self.move_dic[self.direction])
 
+        elif front == 1:
+            self.direction = random.choice(self.move_dic[self.direction])
+
+        else:
+            print('WTF')
 
 
 
