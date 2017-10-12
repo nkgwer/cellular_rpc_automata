@@ -7,7 +7,7 @@ root = tkinter.Tk()
 root.title('bit_monsters')
 #root.geometry("640x640")
 size = 200
-density = 4
+density = 2
 square_size = 750//size
 canvas = tkinter.Canvas(root, width=square_size*size, height=square_size*size)
 canvas.pack()
