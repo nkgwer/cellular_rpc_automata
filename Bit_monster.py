@@ -27,6 +27,13 @@ class Field:
         return self.field[x][y]
 
 
+class Block:
+    def __init__(self):
+        self.member = set()
+
+    def get_len(self):
+        return len(self.member)
+
 
 class Bitmonster:
     def __init__(self, x, y, color, field, name = 'bibi'):
@@ -41,12 +48,13 @@ class Bitmonster:
         self.move_dic = {'up': ['right', 'left'], 'right': ['down', 'up'],
                          'down': ['left', 'right'], 'left': ['up', 'down']}
 
-        self.joined = False
         self.neighbors = set()
-        self.joined_neighbors = set()
-        self.longest_ever_seen = 0
+        self.longest_ever_seen = random.choice([0, 0, 0, 0, 0, 5])
+        self.block = None
+
 
     def move(self):
+        #print(self.longest_ever_seen)
         patterns = [(0, 1), (1, 0), (-1, 0), (0, -1)]
         self.neighbors.clear()
         for dx, dy in patterns:
@@ -54,51 +62,52 @@ class Bitmonster:
             if type(grid) == Bitmonster:
                 self.neighbors.add(grid)
 
-        if self.joined:
-            print(len(self.joined_neighbors))
-            for neighbor in self.neighbors:
-                if neighbor.joined:
-                    self.joined_neighbors.add(neighbor)
-                self.joined_neighbors = self.joined_neighbors.union(neighbor.joined_neighbors)
+        if self.block:
+            #print(self.block.get_len())
             return
 
         else:
-            self.joined_neighbors.clear()
             for neighbor in self.neighbors:
-                if neighbor.color != self.color and len(neighbor.joined_neighbors) >= self.longest_ever_seen:
-                    self.joined = True
-                    neighbor.joined = True
+                if neighbor.color != self.color:
+                    if neighbor.block:
+                        if neighbor.block.get_len() >= self.longest_ever_seen:
+                            neighbor.block.member.add(self)
+                            self.block = neighbor.block
+                            return
+                    else:
+                        if self.longest_ever_seen == 0:
+                            self.block = Block()
+                            self.block.member.add(self)
+                            self.block.member.add(neighbor)
+                            neighbor.block = self.block
+                            return
 
 
-        front = self.field.get_grid_state(self.x + self.direction_dic[self.direction][0],
-                                     self.y + self.direction_dic[self.direction][1])
+            front = self.field.get_grid_state(self.x + self.direction_dic[self.direction][0],
+                                              self.y + self.direction_dic[self.direction][1])
 
-        if front == 0:
-            self.x += self.direction_dic[self.direction][0]
-            self.y += self.direction_dic[self.direction][1]
-            return
+            if front == 0:
+                self.x += self.direction_dic[self.direction][0]
+                self.y += self.direction_dic[self.direction][1]
+                return
 
-        elif type(front) == Bitmonster:
-            if self.longest_ever_seen <= len(front.joined_neighbors):
-                self.longest_ever_seen = len(front.joined_neighbors)
+            elif type(front) == Bitmonster:
+                if front.block:
+                    if self.longest_ever_seen <= len(front.block.member):
+                        self.longest_ever_seen = len(front.block.member)
+                    else:
+                        for member in front.block.member:
+                            member.block = None
+                            member.longest_ever_seen = self.longest_ever_seen
+                        print("kaisan")
+
+                self.direction = random.choice(self.move_dic[self.direction])
+
+            elif front == 1:
+                self.direction = random.choice(self.move_dic[self.direction])
+
             else:
-                front.joined = False
-                neighbor_of_front = copy.copy(front.joined_neighbors)
-                for front_neighbor in neighbor_of_front:
-                    front_neighbor.joined = False
-                    front_neighbor.longest_ever_seen = self.longest_ever_seen
-                    front_neighbor.joined_neighbors.clear()
-                print("kaisan")
-
-
-            #print(self.longest_ever_seen)
-            self.direction = random.choice(self.move_dic[self.direction])
-
-        elif front == 1:
-            self.direction = random.choice(self.move_dic[self.direction])
-
-        else:
-            print('WTF')
+                print('WTF')
 
 
 
