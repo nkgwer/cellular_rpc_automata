@@ -2,10 +2,7 @@
 
 Squared tiny agent
 
-![result](https://github.com/nkgwer/Bit_monster/demo.gif)
-## Getting Started
-
-Run on Python3
+![result](https://github.com/nkgwer/bit_monster/blob/master/demo.gif?raw=true)
 
 
 ## How to run
