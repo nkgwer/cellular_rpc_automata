@@ -2,7 +2,7 @@ import tkinter
 import random
 import itertools
 import collections
-
+import csv
 
 class Field:
     def __init__(self, n = 64, m = 64):
@@ -62,7 +62,7 @@ class Automaton:
 root = tkinter.Tk()
 root.title('Automata')
 size = 50
-density = 20
+density = 10
 square_size = 10
 canvas = tkinter.Canvas(root, width=square_size*size, height=square_size*size)
 canvas.pack()
@@ -80,7 +80,10 @@ for rectangle,automata in zip(rectangles, automaton):
 
 def move_rectangles(automaton, canvas, f):
     count_dict = collections.Counter(list(map(lambda x: x.color, automaton)))
-    print(count_dict)
+    l=[count_dict['red'], count_dict['green'], count_dict['yellow']]
+    with open('result.csv', 'a') as file:
+        writer = csv.writer(file, lineterminator='\n')
+        writer.writerow(l)
 
     for automata in f.automata_list:
         automata.action()
